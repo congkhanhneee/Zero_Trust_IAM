@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tài liệu — CONGKHANH PHUONGNAM IDC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #080c14;
+      --surface: #0d1424;
+      --card:    #111827;
+      --border:  #1a2540;
+      --border2: #243050;
+      --accent:  #3b82f6;
+      --text:    #e2e8f0;
+      --sub:     #94a3b8;
+      --muted:   #475569;
+      --green:   #10b981;
+      --red:     #ef4444;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    .nav { position:sticky;top:0;z-index:100;background:rgba(8,12,20,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px; }
+    .nav-brand { font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.04em;background:linear-gradient(90deg,#93c5fd,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .nav-right  { display:flex;align-items:center;gap:10px; }
+    .user-pill  { display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 14px 5px 6px;font-size:.82rem; }
+    .avatar     { width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6366f1);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;flex-shrink:0; }
+    .btn-sm     { background:transparent;border:1px solid var(--border);color:var(--sub);padding:5px 12px;border-radius:7px;font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .2s,color .2s; }
+    .btn-sm:hover { border-color:var(--red);color:var(--red); }
+
+    .wrap { max-width:1140px;margin:0 auto;padding:32px 24px; }
+    .crumb { display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);margin-bottom:18px; }
+    .crumb a { color:var(--sub);text-decoration:none; }
+    .crumb a:hover { color:var(--text); }
+    .page-hd { display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px; }
+    .page-hd-left h1 { font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700; }
+    .page-hd-left p  { color:var(--sub);font-size:.88rem;margin-top:4px; }
+
+    .tabs { display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px;width:fit-content; }
+    .tab  { padding:7px 18px;border-radius:7px;font-size:.85rem;font-weight:500;cursor:pointer;color:var(--sub);background:transparent;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;text-decoration:none;display:inline-block; }
+    .tab:hover { color:var(--text); }
+    .tab.active { background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.4); }
+
+    .stats { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px; }
+    .stat-card { background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px; }
+    .stat-lbl  { font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px; }
+    .stat-val  { font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:700;line-height:1; }
+    .c-blue    { color:#60a5fa; }
+    .c-green   { color:var(--green); }
+    .c-yellow  { color:#fbbf24; }
+    .c-purple  { color:#a78bfa; }
+
+    .toolbar { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap; }
+    .search-box { display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:8px 14px;flex:1;max-width:360px; }
+    .search-box input { background:none;border:none;color:var(--text);font-size:.875rem;font-family:'DM Sans',sans-serif;outline:none;width:100%; }
+    .search-box input::placeholder { color:var(--muted); }
+    .toolbar-right { display:flex;align-items:center;gap:8px; }
+
+    .btn-primary { display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;transition:background .2s; }
+    .btn-primary:hover { background:#2563eb; }
+    .btn-primary:disabled { background:#1e3a6e;cursor:not-allowed;opacity:.5; }
+    .btn-outline { display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--sub);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;padding:8px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:all .2s; }
+    .btn-outline:hover { border-color:var(--border2);color:var(--text); }
+
+    .perm-bar { display:flex;align-items:center;gap:10px;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:10px 16px;margin-bottom:20px;font-size:.83rem; }
+    .perm-tags { display:flex;gap:6px;flex-wrap:wrap; }
+    .perm-tag  { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:600; }
+    .perm-tag.allow { background:rgba(16,185,129,.15);color:#34d399; }
+    .perm-tag.deny  { background:rgba(239,68,68,.12); color:#f87171; }
+
+    .card { background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden; }
+    .tbl-wrap { overflow-x:auto; }
+    table { width:100%;border-collapse:collapse;font-size:.875rem;min-width:720px; }
+    thead th { background:var(--surface);color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap; }
+    tbody td { padding:13px 16px;border-bottom:1px solid rgba(26,37,64,.6);color:var(--sub);vertical-align:middle; }
+    tbody tr:last-child td { border-bottom:none; }
+    tbody tr:hover td { background:rgba(255,255,255,.02); }
+
+    .file-info { display:flex;align-items:center;gap:10px; }
+    .file-icon { width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;border:1px solid; }
+    .icon-pdf  { background:rgba(239,68,68,.1);  border-color:rgba(239,68,68,.2);  color:#f87171; }
+    .icon-xlsx { background:rgba(16,185,129,.1); border-color:rgba(16,185,129,.2); color:#34d399; }
+    .icon-docx { background:rgba(59,130,246,.1); border-color:rgba(59,130,246,.2); color:#60a5fa; }
+    .icon-pptx { background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.2); color:#fbbf24; }
+    .icon-img  { background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.2);color:#a78bfa; }
+    .icon-other{ background:rgba(100,116,139,.1);border-color:rgba(100,116,139,.2);color:#94a3b8; }
+    .file-name { font-weight:500;color:var(--text); }
+    .file-sub  { font-size:.75rem;color:var(--muted);margin-top:2px; }
+
+    .email-cell { display:flex;align-items:center;gap:6px; }
+    .email-dot  { width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0; }
+    .email-text { font-family:'DM Mono',monospace;font-size:.78rem;color:var(--sub); }
+
+    .mono { font-family:'DM Mono',monospace;font-size:.8rem; }
+    .badge { display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:600; }
+    .badge-cat    { background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.2); }
+    .badge-real   { background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2); }
+    .badge-sample { background:rgba(100,116,139,.1);color:#64748b;border:1px solid rgba(100,116,139,.2); }
+
+    .action-group { display:flex;gap:6px; }
+    .btn-icon { width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .2s;color:var(--muted); }
+    .btn-icon:hover { border-color:var(--border2);color:var(--text); }
+    .btn-icon.download:hover { border-color:#3b82f6;color:#3b82f6;background:rgba(59,130,246,.1); }
+    .btn-icon.del:hover      { border-color:var(--red);color:var(--red);background:rgba(239,68,68,.1); }
+    .btn-icon.hidden         { visibility:hidden;pointer-events:none; }
+    .btn-icon:disabled       { opacity:.3;cursor:not-allowed; }
+
+    .empty { text-align:center;padding:60px 20px;color:var(--muted); }
+    .empty-icon { font-size:2.5rem;margin-bottom:12px;opacity:.4; }
+
+    /* ── Modal ── */
+    .modal-bg { position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s; }
+    .modal-bg.open { opacity:1;pointer-events:all; }
+    .modal { background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:460px;transform:scale(.96);transition:transform .2s; }
+    .modal-bg.open .modal { transform:scale(1); }
+    .modal h2 { font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:18px; }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block;font-size:.78rem;color:var(--sub);margin-bottom:6px; }
+    .form-group select { width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.875rem;padding:9px 12px;outline:none;transition:border-color .2s; }
+    .form-group select:focus { border-color:var(--accent); }
+    .form-group select option { background:var(--card); }
+    .modal-footer { display:flex;justify-content:flex-end;gap:10px;margin-top:20px; }
+    .btn-cancel { background:transparent;border:1px solid var(--border);color:var(--sub);font-family:'DM Sans',sans-serif;font-size:.85rem;padding:8px 18px;border-radius:8px;cursor:pointer; }
+
+    /* ── Drop zone ── */
+    .drop-zone {
+      border: 2px dashed var(--border2);
+      border-radius: 12px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      background: var(--surface);
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: rgba(59,130,246,.05); }
+    .drop-zone input[type="file"] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+    .drop-zone-icon { font-size: 2rem; margin-bottom: 8px; }
+    .drop-zone-text { font-size: .875rem; color: var(--sub); }
+    .drop-zone-sub  { font-size: .75rem; color: var(--muted); margin-top: 4px; }
+    .drop-zone.has-file { border-color: var(--green); background: rgba(16,185,129,.05); }
+    .file-selected { display:flex;align-items:center;gap:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:.83rem; }
+    .file-selected-name { color:var(--text);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    .file-selected-size { color:var(--muted);font-size:.75rem;white-space:nowrap; }
+
+    /* ── Progress bar ── */
+    .progress-wrap { margin-top:14px;display:none; }
+    .progress-wrap.show { display:block; }
+    .progress-bar-bg { background:var(--surface);border-radius:999px;height:6px;overflow:hidden; }
+    .progress-bar    { background:var(--accent);height:100%;border-radius:999px;width:0%;transition:width .3s; }
+    .progress-label  { font-size:.75rem;color:var(--muted);margin-top:6px;text-align:center; }
+
+    .toast { position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:12px 20px;font-size:.875rem;display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all .3s; }
+    .toast.show { transform:translateY(0);opacity:1; }
+    .toast.success { border-color:rgba(16,185,129,.3); }
+    .toast.error   { border-color:rgba(239,68,68,.3); }
+
+    @media (max-width:640px) { .stats { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">CONGKHANH PHUONGNAM IDC</div>
+  <div class="nav-right">
+    <div class="user-pill">
+      <div class="avatar" id="av">?</div>
+      <span id="nav-user" style="color:var(--text)">Đang tải...</span>
+    </div>
+    <button class="btn-sm" onclick="logout()">Đăng xuất</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="crumb">
+    <a href="/">Trang chủ</a><span style="color:var(--muted)">/</span>
+    <a href="/resources">Quản lý dịch vụ</a><span style="color:var(--muted)">/</span>
+    <span>Tài liệu</span>
+  </div>
+
+  <div class="page-hd">
+    <div class="page-hd-left">
+      <h1>Kho tài liệu</h1>
+      <p>Upload, xem và tải xuống tài liệu nội bộ theo quyền hạn</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <a href="/resources" class="tab">Tổng quan</a>
+    <span class="tab active">Tài liệu</span>
+    <a href="/app/" class="tab">Applications</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-lbl">Tổng tài liệu</div><div class="stat-val c-blue"   id="s-total">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">PDF</div>           <div class="stat-val c-purple" id="s-pdf">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Spreadsheet</div>   <div class="stat-val c-green"  id="s-xlsx">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Khác</div>          <div class="stat-val c-yellow" id="s-other">—</div></div>
+  </div>
+
+  <div class="perm-bar">
+    <svg width="14" height="14" fill="none" stroke="#60a5fa" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span style="color:var(--sub);font-size:.83rem">Quyền của bạn:</span>
+    <div class="perm-tags" id="perm-tags"></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <svg width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Tìm kiếm tên file, email..." oninput="renderTable()">
+    </div>
+    <div class="toolbar-right">
+      <select id="cat-filter" class="btn-outline" onchange="renderTable()" style="font-family:'DM Sans',sans-serif;font-size:.85rem;padding:8px 14px;">
+        <option value="">Tất cả danh mục</option>
+        <option>Hợp đồng</option><option>Tài chính</option><option>Nhân sự</option>
+        <option>Kỹ thuật</option><option>Bảo mật</option><option>Kế hoạch</option><option>Khác</option>
+      </select>
+      <button class="btn-primary" id="btn-upload" onclick="openModal()" disabled>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tên tài liệu</th>
+            <th>Danh mục</th>
+            <th>Kích thước</th>
+            <th>Người upload</th>
+            <th>Ngày upload</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="doc-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal-bg" id="modal-bg" onclick="handleBgClick(event)">
+  <div class="modal">
+    <h2>📤 Upload tài liệu</h2>
+
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept=".pdf,.xlsx,.xls,.docx,.doc,.pptx,.ppt,.png,.jpg,.jpeg,.gif,.webp,.txt,.zip" onchange="onFileSelect(this.files[0])">
+      <div class="drop-zone-icon">☁️</div>
+      <div class="drop-zone-text">Kéo thả file vào đây hoặc <span style="color:var(--accent)">chọn file</span></div>
+      <div class="drop-zone-sub">PDF, Word, Excel, PowerPoint, ảnh — tối đa 50 MB</div>
+    </div>
+
+    <div class="file-selected" id="file-selected" style="display:none">
+      <span style="font-size:1.1rem" id="file-selected-icon">📄</span>
+      <span class="file-selected-name" id="file-selected-name"></span>
+      <span class="file-selected-size" id="file-selected-size"></span>
+      <button onclick="clearFile()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 4px" title="Bỏ chọn">✕</button>
+    </div>
+
+    <div class="form-group" style="margin-top:14px">
+      <label>Danh mục</label>
+      <select id="f-cat">
+        <option>Hợp đồng</option><option>Tài chính</option><option>Nhân sự</option>
+        <option>Kỹ thuật</option><option>Bảo mật</option><option>Kế hoạch</option><option>Khác</option>
+      </select>
+    </div>
+
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="progress-label" id="progress-label">Đang upload...</div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Hủy</button>
+      <button class="btn-primary" id="btn-submit-upload" onclick="submitUpload()" disabled>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Xác nhận upload
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let docs = [], perms = { read:true, download:true, write:false, delete:false };
+let selectedFile = null;
+
+const ICONS      = { pdf:'📄', xlsx:'📊', docx:'📝', pptx:'📑', img:'🖼️', other:'📎' };
+const ICON_CLASS = { pdf:'icon-pdf', xlsx:'icon-xlsx', docx:'icon-docx', pptx:'icon-pptx', img:'icon-img', other:'icon-other' };
+
+// ── Init ──────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const [uRes, pRes, dRes] = await Promise.all([
+      fetch('/resources/api/whoami'),
+      fetch('/resources/api/permissions'),
+      fetch('/resources/api/documents'),
+    ]);
+    const u = await uRes.json();
+    perms   = await pRes.json();
+    docs    = await dRes.json();
+
+    const name = u.user || 'Người dùng';
+    document.getElementById('nav-user').textContent = u.email || name;
+    document.getElementById('av').textContent       = name.substring(0,2).toUpperCase();
+
+    applyPermissions();
+    renderStats();
+    renderTable();
+  } catch(e) {
+    showToast('Không thể tải dữ liệu', 'error');
+  }
+}
+
+function applyPermissions() {
+  const tags = [
+    { label:'Xem',       ok: perms.read     },
+    { label:'Tải xuống', ok: perms.download },
+    { label:'Upload',    ok: perms.write    },
+    { label:'Xóa',       ok: perms.delete   },
+  ];
+  document.getElementById('perm-tags').innerHTML = tags.map(t =>
+    `<span class="perm-tag ${t.ok?'allow':'deny'}">${t.ok?'✓':'✗'} ${t.label}</span>`
+  ).join('');
+  if (perms.write) document.getElementById('btn-upload').disabled = false;
+}
+
+function renderStats() {
+  document.getElementById('s-total').textContent = docs.length;
+  document.getElementById('s-pdf').textContent   = docs.filter(d => d.type === 'pdf').length;
+  document.getElementById('s-xlsx').textContent  = docs.filter(d => d.type === 'xlsx').length;
+  document.getElementById('s-other').textContent = docs.filter(d => !['pdf','xlsx'].includes(d.type)).length;
+}
+
+function renderTable() {
+  const q   = document.getElementById('search-input').value.toLowerCase();
+  const cat = document.getElementById('cat-filter').value;
+
+  const filtered = docs.filter(d => {
+    const searchTarget = [d.name, d.owner, d.owner_email || ''].join(' ').toLowerCase();
+    return (!q || searchTarget.includes(q)) && (!cat || d.category === cat);
+  });
+
+  const tbody = document.getElementById('doc-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📂</div>Không có tài liệu nào</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(d => {
+    const hasFile    = !!d.filename;
+    const emailShow  = d.owner_email || d.owner; // fallback về owner name nếu chưa có email
+
+    return `
+    <tr>
+      <td>
+        <div class="file-info">
+          <div class="file-icon ${ICON_CLASS[d.type]||'icon-other'}">${ICONS[d.type]||'📎'}</div>
+          <div>
+            <div class="file-name">${d.name}</div>
+            <div class="file-sub">ID: #${d.id}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="badge badge-cat">${d.category}</span></td>
+      <td><span class="mono">${d.size}</span></td>
+      <td>
+        <div class="email-cell">
+          <span class="email-dot"></span>
+          <span class="email-text">${emailShow}</span>
+        </div>
+      </td>
+      <td><span class="mono">${d.uploadedAt}</span></td>
+      <td><span class="badge ${hasFile?'badge-real':'badge-sample'}">${hasFile?'✓ Thực':'Mẫu'}</span></td>
+      <td>
+        <div class="action-group">
+          <button class="btn-icon download ${perms.download&&hasFile?'':'hidden'}"
+            title="Tải xuống" onclick="downloadDoc(${d.id})">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button class="btn-icon del ${perms.delete?'':'hidden'}"
+            title="Xóa" onclick="deleteDoc(${d.id},'${d.name.replace(/'/g,"\\'")}')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Download ──────────────────────────────────────────────────────────────
+function downloadDoc(id) {
+  window.location.href = `/resources/api/documents/${id}/download`;
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────
+async function deleteDoc(id, name) {
+  if (!confirm(`Xóa tài liệu "${name}"?`)) return;
+  try {
+    const r = await fetch(`/resources/api/documents/${id}`, { method:'DELETE' });
+    const d = await r.json();
+    if (!r.ok) { showToast(d.error || 'Lỗi xóa tài liệu', 'error'); return; }
+    docs = docs.filter(x => x.id !== id);
+    renderStats(); renderTable();
+    showToast('Đã xóa tài liệu thành công', 'success');
+  } catch { showToast('Lỗi kết nối server', 'error'); }
+}
+
+// ── Modal & file select ───────────────────────────────────────────────────
+function openModal() {
+  clearFile();
+  document.getElementById('progress-wrap').classList.remove('show');
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function handleBgClick(e) { if (e.target === e.currentTarget) closeModal(); }
+
+function onFileSelect(file) {
+  if (!file) return;
+  selectedFile = file;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const iconMap = { pdf:'📄', xlsx:'📊', xls:'📊', docx:'📝', doc:'📝', pptx:'📑', ppt:'📑', png:'🖼️', jpg:'🖼️', jpeg:'🖼️', gif:'🖼️', webp:'🖼️' };
+
+  document.getElementById('file-selected-icon').textContent = iconMap[ext] || '📎';
+  document.getElementById('file-selected-name').textContent = file.name;
+  document.getElementById('file-selected-size').textContent = formatSize(file.size);
+  document.getElementById('file-selected').style.display = 'flex';
+  document.getElementById('drop-zone').classList.add('has-file');
+  document.getElementById('btn-submit-upload').disabled = false;
+}
+
+function clearFile() {
+  selectedFile = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('file-selected').style.display = 'none';
+  document.getElementById('drop-zone').classList.remove('has-file');
+  document.getElementById('btn-submit-upload').disabled = true;
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024)       return bytes + ' B';
+  if (bytes < 1024*1024)  return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+// ── Drag & drop ───────────────────────────────────────────────────────────
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) onFileSelect(file);
+});
+
+// ── Submit upload ─────────────────────────────────────────────────────────
+function submitUpload() {
+  if (!selectedFile) return;
+
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+  formData.append('category', document.getElementById('f-cat').value);
+
+  const btn      = document.getElementById('btn-submit-upload');
+  const progWrap = document.getElementById('progress-wrap');
+  const progBar  = document.getElementById('progress-bar');
+  const progLbl  = document.getElementById('progress-label');
+
+  btn.disabled = true;
+  progWrap.classList.add('show');
+  progBar.style.width = '0%';
+  progLbl.textContent = 'Đang upload...';
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/resources/api/documents');
+
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) {
+      const pct = Math.round(e.loaded / e.total * 100);
+      progBar.style.width = pct + '%';
+      progLbl.textContent = `Đang upload... ${pct}%`;
+    }
+  };
+
+  xhr.onload = () => {
+    if (xhr.status === 201) {
+      const doc = JSON.parse(xhr.responseText);
+      docs.unshift(doc);
+      renderStats(); renderTable();
+      closeModal();
+      showToast('Upload tài liệu thành công ✓', 'success');
+    } else {
+      let msg = 'Lỗi upload';
+      try { msg = JSON.parse(xhr.responseText).error || msg; } catch {}
+      showToast(msg, 'error');
+      btn.disabled = false;
+      progWrap.classList.remove('show');
+    }
+  };
+
+  xhr.onerror = () => {
+    showToast('Lỗi kết nối server', 'error');
+    btn.disabled = false;
+    progWrap.classList.remove('show');
+  };
+
+  xhr.send(formData);
+}
+
+function showToast(msg, type = 'success') {
+  const t    = document.getElementById('toast');
+  const icon = type === 'success' ? '✓' : '✕';
+  t.innerHTML = `<span style="color:${type==='success'?'#34d399':'#f87171'};font-weight:700">${icon}</span> ${msg}`;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+function logout() { window.location.href = '/logout?rd=https://public.vocongkhanh.id.vn/'; }
+
+init();
+</script>
+</body>
+</html>
