@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Logs — Private Application</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #080c14;
+      --surface: #0d1424;
+      --card:    #111827;
+      --border:  #1a2540;
+      --border2: #243050;
+      --accent:  #6366f1;
+      --text:    #e2e8f0;
+      --sub:     #94a3b8;
+      --muted:   #475569;
+      --green:   #10b981;
+      --red:     #ef4444;
+      --yellow:  #f59e0b;
+      --blue:    #3b82f6;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    .nav { position:sticky;top:0;z-index:100;background:rgba(8,12,20,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px; }
+    .nav-brand { font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.04em;background:linear-gradient(90deg,#a5b4fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .nav-right  { display:flex;align-items:center;gap:10px; }
+    .user-pill  { display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 14px 5px 6px;font-size:.82rem; }
+    .avatar     { width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;flex-shrink:0; }
+    .btn-sm     { background:transparent;border:1px solid var(--border);color:var(--sub);padding:5px 12px;border-radius:7px;font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .2s,color .2s; }
+    .btn-sm:hover { border-color:var(--red);color:var(--red); }
+
+    .wrap { max-width:1300px;margin:0 auto;padding:28px 24px; }
+    .crumb { display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);margin-bottom:20px; }
+    .crumb a { color:var(--sub);text-decoration:none; }
+    .crumb a:hover { color:var(--text); }
+
+    .tabs { display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:24px;width:fit-content; }
+    .tab  { padding:7px 18px;border-radius:7px;font-size:.85rem;font-weight:500;cursor:pointer;color:var(--sub);background:transparent;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;text-decoration:none;display:inline-block; }
+    .tab:hover { color:var(--text); }
+    .tab.active { background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.4); }
+
+    .page-hd { display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px; }
+    .page-hd h1 { font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700; }
+    .page-hd p  { color:var(--sub);font-size:.88rem;margin-top:4px; }
+
+    /* ── Stats — 4 cột (bỏ "Xem") ── */
+    .stats { display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px; }
+    .stat-card { background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px; }
+    .stat-lbl  { font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px; }
+    .stat-val  { font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;line-height:1; }
+
+    /* ── Toolbar ── */
+    .toolbar { display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap; }
+    .search-box { display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:8px 14px;flex:1;max-width:340px; }
+    .search-box input { background:none;border:none;color:var(--text);font-size:.875rem;font-family:'DM Sans',sans-serif;outline:none;width:100%; }
+    .search-box input::placeholder { color:var(--muted); }
+    .toolbar-right { display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
+
+    select.filter-sel { background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--sub);font-family:'DM Sans',sans-serif;font-size:.83rem;padding:8px 12px;cursor:pointer;outline:none; }
+    select.filter-sel option { background:var(--card); }
+    .btn { display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:500;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;transition:all .2s; }
+    .btn-accent  { background:var(--accent);color:#fff; }
+    .btn-accent:hover { background:#4f46e5; }
+    .btn-outline { background:transparent;color:var(--sub);border:1px solid var(--border); }
+    .btn-outline:hover { border-color:var(--border2);color:var(--text); }
+
+    /* ── Log table ── */
+    .card { background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden; }
+    .tbl-wrap { overflow-x:auto; }
+    table { width:100%;border-collapse:collapse;font-size:.82rem;min-width:900px; }
+    thead th { background:var(--surface);color:var(--muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap; }
+    tbody td { padding:11px 14px;border-bottom:1px solid rgba(26,37,64,.5);color:var(--sub);vertical-align:middle; }
+    tbody tr:last-child td { border-bottom:none; }
+    tbody tr:hover td { background:rgba(255,255,255,.02); }
+
+    .mono { font-family:'DM Mono',monospace;font-size:.75rem; }
+
+    /* ── Action badge ── */
+    .action-badge { display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:.7rem;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap; }
+    .ab-create  { background:rgba(16,185,129,.12); color:#34d399; border:1px solid rgba(16,185,129,.2); }
+    .ab-update  { background:rgba(59,130,246,.12);  color:#60a5fa; border:1px solid rgba(59,130,246,.2); }
+    .ab-delete  { background:rgba(239,68,68,.12);   color:#f87171; border:1px solid rgba(239,68,68,.2); }
+    .ab-access  { background:rgba(99,102,241,.12);  color:#a5b4fc; border:1px solid rgba(99,102,241,.2); }
+    .ab-denied  { background:rgba(239,68,68,.15);   color:#fca5a5; border:1px solid rgba(239,68,68,.3); }
+
+    /* ── Detail expand ── */
+    .detail-btn { background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:2px 8px;font-size:.7rem;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s; }
+    .detail-btn:hover { border-color:var(--border2);color:var(--text); }
+    .detail-row { display:none; }
+    .detail-row.open { display:table-row; }
+    .detail-row td { background:var(--surface);padding:12px 14px; }
+    pre.detail-pre { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.72rem;color:#93c5fd;overflow-x:auto;line-height:1.6;max-height:200px;overflow-y:auto; }
+
+    /* ── Auto-refresh indicator ── */
+    .refresh-dot { width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px;animation:blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .empty { text-align:center;padding:48px;color:var(--muted);font-size:.85rem; }
+    .empty-icon { font-size:2rem;margin-bottom:10px;opacity:.3; }
+
+    .toast { position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:12px 20px;font-size:.875rem;display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all .3s; }
+    .toast.show { transform:translateY(0);opacity:1; }
+    .toast.success { border-color:rgba(16,185,129,.3); }
+    .toast.error   { border-color:rgba(239,68,68,.3); }
+
+    @media (max-width:768px) { .stats { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">PRIVATE APPLICATION</div>
+  <div class="nav-right">
+    <div class="user-pill">
+      <div class="avatar" id="av">?</div>
+      <span id="nav-user" style="color:var(--text)">Đang tải...</span>
+    </div>
+    <button class="btn-sm" onclick="logout()">Đăng xuất</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="crumb">
+    <a href="/app/">Dashboard</a><span>/</span><span>Audit Logs</span>
+  </div>
+
+  <div class="page-hd">
+    <div>
+      <h1>🔍 Audit Logs</h1>
+      <p>Lịch sử hành động người dùng — chỉ dành cho Admin</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted)">
+      <span class="refresh-dot"></span> Tự động làm mới mỗi 30 giây
+    </div>
+  </div>
+
+  <div class="tabs">
+    <a href="/app/" class="tab">Dashboard</a>
+    <a href="/app/projects" class="tab">Projects &amp; Tasks</a>
+    <span class="tab active">Audit Logs</span>
+  </div>
+
+  <!-- Stats — 4 cột, bỏ "Xem" -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-lbl">Tổng sự kiện</div><div class="stat-val" style="color:#a5b4fc" id="s-total">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Tạo mới</div><div class="stat-val" style="color:var(--green)" id="s-create">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Cập nhật</div><div class="stat-val" style="color:var(--blue)" id="s-update">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Xóa</div><div class="stat-val" style="color:var(--yellow)" id="s-delete">—</div></div>
+  </div>
+
+  <!-- Toolbar — bỏ option "Xem" trong filter -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Tìm theo user, action..." oninput="applyFilter()">
+    </div>
+    <div class="toolbar-right">
+      <select class="filter-sel" id="action-filter" onchange="applyFilter()">
+        <option value="">Tất cả hành động</option>
+        <option value="CREATE">Tạo mới</option>
+        <option value="UPDATE">Cập nhật</option>
+        <option value="DELETE">Xóa</option>
+        <option value="ACCESS">Truy cập</option>
+        <option value="DENIED">Bị từ chối</option>
+      </select>
+      <select class="filter-sel" id="resource-filter" onchange="applyFilter()">
+        <option value="">Tất cả tài nguyên</option>
+        <option value="projects">Projects</option>
+        <option value="tasks">Tasks</option>
+        <option value="private-data">Private Data</option>
+        <option value="admin-zone">Admin Zone</option>
+        <option value="logs">Logs</option>
+      </select>
+      <button class="btn btn-accent" onclick="loadLogs()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.34"/></svg>
+        Làm mới
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Người dùng</th>
+            <th>Hành động</th>
+            <th>Tài nguyên</th>
+            <th>ID</th>
+            <th>IP</th>
+            <th>Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody id="log-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let allLogs = [];
+let autoRefreshTimer = null;
+
+// ── Init ──────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const u = await (await fetch('/app/whoami')).json();
+    const name = u.user || '—';
+    document.getElementById('nav-user').textContent = name;
+    document.getElementById('av').textContent       = name.substring(0,2).toUpperCase();
+  } catch {}
+  await loadLogs();
+  autoRefreshTimer = setInterval(loadLogs, 30000);
+}
+
+async function loadLogs() {
+  try {
+    const r = await fetch('/app/api/logs?limit=500');
+    if (!r.ok) {
+      const d = await r.json();
+      showToast(d.error || 'Lỗi tải log', 'error');
+      return;
+    }
+    allLogs = await r.json();
+    updateStats();
+    applyFilter();
+  } catch {
+    showToast('Lỗi kết nối server', 'error');
+  }
+}
+
+// ── Stats — chỉ tổng / tạo / cập nhật / xóa ─────────────────────────────
+function updateStats() {
+  document.getElementById('s-total').textContent  = allLogs.length;
+  document.getElementById('s-create').textContent = allLogs.filter(l => l.action.includes('CREATE')).length;
+  document.getElementById('s-update').textContent = allLogs.filter(l => l.action.includes('UPDATE')).length;
+  document.getElementById('s-delete').textContent = allLogs.filter(l => l.action.includes('DELETE')).length;
+}
+
+// ── Filter & render ───────────────────────────────────────────────────────
+function applyFilter() {
+  const q    = document.getElementById('search-input').value.toLowerCase();
+  const actF = document.getElementById('action-filter').value.toUpperCase();
+  const resF = document.getElementById('resource-filter').value.toLowerCase();
+
+  const filtered = allLogs.filter(l => {
+    const matchQ   = !q    || (l.user||'').toLowerCase().includes(q) || (l.action||'').toLowerCase().includes(q) || (l.resource||'').toLowerCase().includes(q);
+    const matchAct = !actF || (l.action||'').includes(actF);
+    const matchRes = !resF || (l.resource||'').toLowerCase().includes(resF);
+    return matchQ && matchAct && matchRes;
+  });
+
+  renderTable(filtered);
+}
+
+function renderTable(logs) {
+  const tbody = document.getElementById('log-tbody');
+  if (!logs.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div>Không có log nào</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = logs.map((l, i) => {
+    const cls    = getActionClass(l.action);
+    const icon   = getActionIcon(l.action);
+    const ts     = formatTime(l.timestamp);
+    const hasDetail = l.detail || l.reason;
+    const rowId  = `dr-${i}`;
+
+    return `
+      <tr>
+        <td><span class="mono" style="color:var(--muted)">${ts}</span></td>
+        <td style="color:var(--text);font-weight:500">${l.user || '—'}</td>
+        <td><span class="action-badge ${cls}">${icon} ${l.action || '—'}</span></td>
+        <td><span style="color:var(--sub)">${l.resource || '—'}</span></td>
+        <td><span class="mono">${l.resourceId !== undefined ? '#'+l.resourceId : '—'}</span></td>
+        <td><span class="mono" style="font-size:.7rem">${l.ip || '—'}</span></td>
+        <td>
+          ${hasDetail
+            ? `<button class="detail-btn" onclick="toggleDetail('${rowId}')">JSON</button>`
+            : `<span style="color:var(--muted);font-size:.75rem">—</span>`
+          }
+        </td>
+      </tr>
+      ${hasDetail ? `
+      <tr class="detail-row" id="${rowId}">
+        <td colspan="7">
+          <pre class="detail-pre">${escHtml(JSON.stringify({ detail: l.detail, reason: l.reason }, null, 2))}</pre>
+        </td>
+      </tr>` : ''}
+    `;
+  }).join('');
+}
+
+function toggleDetail(id) {
+  const row = document.getElementById(id);
+  if (row) row.classList.toggle('open');
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function getActionClass(action = '') {
+  if (action.includes('DENIED'))  return 'ab-denied';
+  if (action.includes('CREATE'))  return 'ab-create';
+  if (action.includes('UPDATE'))  return 'ab-update';
+  if (action.includes('DELETE'))  return 'ab-delete';
+  if (action.includes('ACCESS'))  return 'ab-access';
+  return 'ab-access';
+}
+
+function getActionIcon(action = '') {
+  if (action.includes('DENIED'))  return '🚫';
+  if (action.includes('CREATE'))  return '✚';
+  if (action.includes('UPDATE'))  return '✎';
+  if (action.includes('DELETE'))  return '🗑';
+  if (action.includes('ACCESS'))  return '🔑';
+  return '•';
+}
+
+function formatTime(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span style="color:${type==='success'?'#34d399':'#f87171'};font-weight:700">${type==='success'?'✓':'✕'}</span> ${msg}`;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function logout() { window.location.href = '/logout?rd=https://public.vocongkhanh.id.vn/'; }
+
+init();
+</script>
+</body>
+</html>
