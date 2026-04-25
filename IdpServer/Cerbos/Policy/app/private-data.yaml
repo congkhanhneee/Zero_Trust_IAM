@@ -1,0 +1,40 @@
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  resource: "private_data"
+  importDerivedRoles:
+    - app_derived_roles
+  rules:
+    - name: deny_anonymous
+      actions: ["*"]
+      roles: ["anonymous"]
+      effect: EFFECT_DENY
+
+    - name: deny_blacklisted_ip
+      actions: ["*"]
+      roles: ["user", "private-access", "public-access", "role:default-roles-zero-trust-realm"]
+      effect: EFFECT_DENY
+      condition:
+        match:
+          expr: "P.attr.ip in ['203.0.113.1', '8.8.8.8', '172.16.0.50']"
+
+    - name: admin_full_private_data
+      actions: ["*"]
+      derivedRoles: ["admin_role"]
+      effect: EFFECT_ALLOW
+
+    - name: private_access_read_private
+      actions: ["read_private"]
+      roles: ["private-access"]
+      effect: EFFECT_ALLOW
+      condition:
+        match:
+          all:
+            of:
+              - expr: P.attr.hour >= 7 && P.attr.hour <= 22
+              - expr: "!(P.attr.ip in ['203.0.113.1', '8.8.8.8', '172.16.0.50'])"
+
+    - name: private_access_read_admin
+      actions: ["read_admin"]
+      derivedRoles: ["admin_role"]
+      effect: EFFECT_ALLOW
