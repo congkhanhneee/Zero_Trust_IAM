@@ -1,0 +1,24 @@
+apiVersion: api.cerbos.dev/v1
+derivedRoles:
+  name: app_derived_roles
+  definitions:
+    - name: admin_role
+      parentRoles: ["admin", "administrator", "adminitrator"]
+
+    - name: app_user_in_hours
+      parentRoles: ["user", "private-access", "role:default-roles-zero-trust-realm"]
+      condition:
+        match:
+          all:
+            of:
+              - expr: P.attr.hour >= 7 && P.attr.hour <= 22
+              - expr: "!(P.attr.ip in ['203.0.113.1', '8.8.8.8', '172.16.0.50'])"
+
+    - name: public_user_in_hours
+      parentRoles: ["public-access", "role:default-roles-zero-trust-realm"]
+      condition:
+        match:
+          all:
+            of:
+              - expr: P.attr.hour >= 7 && P.attr.hour <= 22
+              - expr: "!(P.attr.ip in ['203.0.113.1', '8.8.8.8', '172.16.0.50'])"
