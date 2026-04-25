@@ -1,0 +1,13 @@
+server:
+  httpListenAddr: ":3592"
+
+storage:
+  driver: disk
+  disk:
+    directory: /policies
+audit:
+  enabled: true
+  backend: file
+
+  file:
+    path: /var/log/cerbos_audit.log
