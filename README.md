@@ -67,8 +67,8 @@ Keycloak (IdP)
 - OAuth2 Proxy
 - NGINX
 - Cerbos
-- Node.js / Express (Demo App)
-- Wazuh + ELK Stack
+- Node.js (Demo App)
+- Wazuh
 
 ---
 
