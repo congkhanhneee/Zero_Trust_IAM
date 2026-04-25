@@ -1,28 +1,6 @@
-docker run -d --name oauth2-proxy \
-  --restart unless-stopped \
-  --network host \
-  quay.io/oauth2-proxy/oauth2-proxy:latest \
-  --provider=keycloak-oidc \
-  --client-id=oauth2-proxy \
-  --client-secret=cMNxhFFJqc4boVzl7X4aMxpxca6XMUji \
-  --redirect-url=https://public.vocongkhanh.id.vn/oauth2/callback \
-  --oidc-issuer-url=https://idc.vocongkhanh.id.vn/auth/realms/zero-trust-realm \
-  --cookie-secret=1ZBA9OiD2Y4XjYSiuCxtDw4g3LFRYD1NLqYmhwV8hQU \
-  --email-domain=* \
-  --scope="openid profile email groups" \
-  --http-address=0.0.0.0:4180 \
-  --upstream=static://200 \
-  --reverse-proxy=true \
-  --skip-jwt-bearer-tokens=true \
-  --set-xauthrequest=true \
-  --cookie-secure=true \
-  --cookie-samesite=lax \
-  --cookie-domain=.vocongkhanh.id.vn \
-  --whitelist-domain=.vocongkhanh.id.vn \
-  --insecure-oidc-skip-issuer-verification=true \
-  --insecure-oidc-allow-unverified-email=true \
-  --session-store-type=redis \
-  --redis-connection-url=redis://127.0.0.1:6379 \
-  --standard-logging=true \
-  --auth-logging=true \
-  --request-logging=true
+docker run -d \
+  --name cerbos \
+  -p 3592:3592 \
+  -v $(pwd)/policies:/policies \
+  ghcr.io/cerbos/cerbos:latest server \
+    --config=/policies/.cerbos.yaml
