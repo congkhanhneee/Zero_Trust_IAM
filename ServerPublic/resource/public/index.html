@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONGKHANH PHUONGNAM IDC — Zero Trust Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #080c14;
+      --surface:#0d1424;
+      --border: #1a2540;
+      --accent: #3b82f6;
+      --accent2:#6366f1;
+      --text:   #e2e8f0;
+      --muted:  #64748b;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ── grid background ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ── glow orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: .18;
+      pointer-events: none;
+    }
+    .orb1 { width: 500px; height: 500px; top: -120px; left: -120px; background: #3b82f6; }
+    .orb2 { width: 400px; height: 400px; bottom: -100px; right: -80px;  background: #6366f1; }
+
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 0 24px;
+      animation: fadeUp .8s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(59,130,246,.1);
+      border: 1px solid rgba(59,130,246,.25);
+      color: #93c5fd;
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #3b82f6;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .3; }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, #e2e8f0 30%, #93c5fd 70%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      font-weight: 500;
+      padding: 13px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: #2563eb; transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      font-weight: 500;
+      padding: 13px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color .2s, transform .15s;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: #334155; transform: translateY(-2px); }
+
+    /* ── stats row ── */
+    .stats {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      margin-top: 64px;
+      animation: fadeUp .8s .3s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #93c5fd;
+    }
+    .stat-lbl { font-size: .8rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── divider ── */
+    .divider { width: 1px; height: 40px; background: var(--border); align-self: center; }
+  </style>
+</head>
+<body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <main class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Zero Trust Security
+    </div>
+
+    <h1>CONGKHANH<br>PHUONGNAM IDC</h1>
+
+    <p class="sub">Nền tảng hạ tầng hybrid cloud bảo mật theo mô hình Zero Trust — xác thực mọi yêu cầu, mọi lúc.</p>
+
+    <div class="actions">
+      <a href="/resources" class="btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Cổng dịch vụ
+      </a>
+      <a href="/app/" class="btn-secondary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Private Application
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Máy chủ</div></div>
+      <div class="divider"></div>
+      <div class="stat"><div class="stat-val">3</div><div class="stat-lbl">Zone</div></div>
+      <div class="divider"></div>
+      <div class="stat"><div class="stat-val">RBAC</div><div class="stat-lbl">Policy engine</div></div>
+      <div class="divider"></div>
+      <div class="stat"><div class="stat-val">mTLS</div><div class="stat-lbl">Kết nối nội bộ</div></div>
+    </div>
+  </main>
+</body>
+</html>
