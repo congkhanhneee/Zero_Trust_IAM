@@ -1,0 +1,21 @@
+kind: oidc
+metadata:
+  name: keycloak
+spec:
+  claims_to_roles:
+  - claim: groups
+    roles:
+    - private-access
+    value: private-access
+  - claim: groups
+    roles:
+    - public-access
+    value: public-access
+  client_id: teleport
+  client_secret: 2swAYQgvQBt93HYcmrl17Xpd8oQx7pld
+  issuer_url: https://idc.vocongkhanh.id.vn/realms/zero-trust-realm
+  redirect_url: https://idc.vocongkhanh.id.vn/v1/webapi/sso/oidc/callback
+  scope:
+  - openid
+  - groups
+version: v3
