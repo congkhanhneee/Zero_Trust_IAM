@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Dịch Vụ — CONGKHANH PHUONGNAM IDC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #080c14;
+      --surface: #0d1424;
+      --card:    #111827;
+      --border:  #1a2540;
+      --border2: #243050;
+      --accent:  #3b82f6;
+      --purple:  #818cf8;
+      --text:    #e2e8f0;
+      --sub:     #94a3b8;
+      --muted:   #475569;
+      --green:   #10b981;
+      --red:     #ef4444;
+      --yellow:  #f59e0b;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Navbar ── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,12,20,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; height: 56px;
+    }
+    .nav-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: .9rem; font-weight: 700;
+      letter-spacing: .04em;
+      background: linear-gradient(90deg, #93c5fd, #a5b4fc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .user-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 999px; padding: 5px 14px 5px 6px;
+      font-size: .82rem;
+    }
+    .avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .btn-sm {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--sub); padding: 5px 12px; border-radius: 7px;
+      font-size: .8rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-sm:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── Layout ── */
+    .wrap { max-width: 1140px; margin: 0 auto; padding: 32px 24px; }
+
+    /* ── Page header ── */
+    .page-hd { margin-bottom: 28px; }
+    .page-hd h1 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; }
+    .page-hd p  { color: var(--sub); font-size: .88rem; margin-top: 4px; }
+
+    /* ── Breadcrumb ── */
+    .crumb { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); margin-bottom: 18px; }
+    .crumb a { color: var(--sub); text-decoration: none; }
+    .crumb a:hover { color: var(--text); }
+    .crumb-sep { color: var(--muted); }
+
+    /* ── Stat grid ── */
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .stat-lbl { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+    .stat-val { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 700; line-height: 1; }
+    .c-blue   { color: #60a5fa; }
+    .c-green  { color: var(--green); }
+    .c-red    { color: var(--red); }
+    .c-purple { color: var(--purple); font-size: 1.2rem; padding-top: 6px; }
+
+    /* ── Card ── */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; margin-bottom: 20px; }
+    .card-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .card-title { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+    /* ── Nav tabs ── */
+    .tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 20px; width: fit-content; }
+    .tab {
+      padding: 7px 18px; border-radius: 7px; font-size: .85rem; font-weight: 500;
+      cursor: pointer; color: var(--sub); background: transparent;
+      border: none; font-family: 'DM Sans', sans-serif; transition: all .15s;
+      text-decoration: none; display: inline-block;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+
+    /* ── User info grid ── */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .info-item { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
+    .info-item-lbl { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .info-item-val { font-size: .9rem; font-weight: 500; word-break: break-all; }
+
+    /* ── Action button ── */
+    .btn-accent {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500;
+      padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;
+      text-decoration: none; transition: background .2s;
+    }
+    .btn-accent:hover { background: #2563eb; }
+
+    /* ── Table ── */
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; min-width: 680px; }
+    thead th {
+      background: var(--surface); color: var(--muted);
+      font-size: .7rem; text-transform: uppercase; letter-spacing: .06em;
+      font-weight: 600; padding: 10px 14px; text-align: left;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    tbody td { padding: 13px 14px; border-bottom: 1px solid rgba(26,37,64,.6); color: var(--sub); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(255,255,255,.02); }
+    .srv-name { font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .srv-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .mono { font-family: 'DM Mono', monospace; font-size: .8rem; }
+    .ip   { color: #60a5fa; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; white-space: nowrap; }
+    .badge-on  { background: rgba(16,185,129,.1); color: #34d399; border: 1px solid rgba(16,185,129,.2); }
+    .badge-off { background: rgba(239,68,68,.1);  color: #f87171; border: 1px solid rgba(239,68,68,.2); }
+    .badge-pay { background: rgba(96,165,250,.1); color: #93c5fd; border: 1px solid rgba(96,165,250,.2); }
+    .badge-live{ background: rgba(16,185,129,.1); color: #34d399; border: 1px solid rgba(16,185,129,.2); }
+    .dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
+    .dot-on  { background: #34d399; box-shadow: 0 0 5px #34d39966; }
+    .dot-off { background: #f87171; }
+
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">CONGKHANH PHUONGNAM IDC</div>
+  <div class="nav-right">
+    <div class="user-pill">
+      <div class="avatar" id="av">?</div>
+      <span id="nav-user" style="color:var(--text)">Đang tải...</span>
+    </div>
+    <button class="btn-sm" onclick="logout()">Đăng xuất</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="crumb">
+    <a href="/">Trang chủ</a>
+    <span class="crumb-sep">/</span>
+    <span>Quản lý dịch vụ</span>
+  </div>
+
+  <div class="page-hd">
+    <h1>Quản lý dịch vụ</h1>
+    <p>Tổng quan hạ tầng và dịch vụ đang vận hành</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <span class="tab active">Tổng quan</span>
+    <a href="/resources/documents" class="tab">Tài liệu</a>
+    <a href="/app/" class="tab">Applications</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-lbl">Tổng máy chủ</div><div class="stat-val c-blue">5</div></div>
+    <div class="stat-card"><div class="stat-lbl">Đang hoạt động</div><div class="stat-val c-green">4</div></div>
+    <div class="stat-card"><div class="stat-lbl">Đã tắt</div><div class="stat-val c-red">1</div></div>
+    <div class="stat-card"><div class="stat-lbl">Gói dịch vụ</div><div class="stat-val c-purple">Paygo</div></div>
+  </div>
+
+  <!-- User info -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Thông tin người dùng
+      </div>
+      <a href="/app/" class="btn-accent">
+        Private Application
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="info-grid" id="user-info">
+      <div class="info-item"><div class="info-item-lbl">Tên đăng nhập</div><div class="info-item-val" id="info-user">—</div></div>
+      <div class="info-item"><div class="info-item-lbl">Email</div><div class="info-item-val" id="info-email">—</div></div>
+      <div class="info-item" style="grid-column:1/-1"><div class="info-item-lbl">Nhóm</div><div class="info-item-val" id="info-groups">—</div></div>
+    </div>
+  </div>
+
+  <!-- Server table -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        Dịch vụ đang sử dụng
+      </div>
+      <span class="badge badge-live"><span class="dot dot-on"></span> Live</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tên máy chủ</th><th>ID</th><th>Trạng thái</th>
+            <th>Hệ điều hành</th><th>Địa chỉ IP</th><th>Dịch vụ</th><th>Gói</th>
+          </tr>
+        </thead>
+        <tbody id="srv-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const SERVERS = [
+  { name:'SIEM',            id:'PG14566714', on:false, os:'Ubuntu Server 22.04 LTS', ip:'125.212.240.158', svc:'Đang hoạt động', icon:'🛡️' },
+  { name:'SIEMv2',          id:'PG14566715', on:true,  os:'Ubuntu Server 24.04 LTS', ip:'27.71.27.43',     svc:'Đang hoạt động', icon:'🛡️' },
+  { name:'Private-Node',    id:'PG14566712', on:true,  os:'Ubuntu Server 24.04 LTS', ip:'171.237.178.61',  svc:'Đang hoạt động', icon:'🔒' },
+  { name:'Public-Node',     id:'PG14566710', on:true,  os:'Ubuntu Server 24.04 LTS', ip:'171.244.142.59',  svc:'Đang hoạt động', icon:'🌐' },
+  { name:'Identity-Server', id:'PG14566711', on:true,  os:'Ubuntu Server 24.04 LTS', ip:'171.244.143.144', svc:'Đang hoạt động', icon:'🔑' },
+];
+
+document.getElementById('srv-tbody').innerHTML = SERVERS.map(s => `
+  <tr>
+    <td><div class="srv-name"><div class="srv-icon">${s.icon}</div>${s.name}</div></td>
+    <td><span class="mono">${s.id}</span></td>
+    <td><span class="badge ${s.on ? 'badge-on':'badge-off'}"><span class="dot ${s.on ? 'dot-on':'dot-off'}"></span>${s.on ? 'Máy bật':'Máy tắt'}</span></td>
+    <td>${s.os}</td>
+    <td><span class="mono ip">${s.ip}</span></td>
+    <td>${s.svc}</td>
+    <td><span class="badge badge-pay">Paygo</span></td>
+  </tr>`).join('');
+
+async function loadUser() {
+  try {
+    const d = await (await fetch('/resources/api/whoami')).json();
+    const u = d.user || 'Không xác định';
+    document.getElementById('info-user').textContent   = u;
+    document.getElementById('info-email').textContent  = d.email  || '—';
+    document.getElementById('info-groups').textContent = d.groups || '—';
+    document.getElementById('nav-user').textContent    = u;
+    document.getElementById('av').textContent          = u.substring(0,2).toUpperCase();
+  } catch { document.getElementById('nav-user').textContent = 'Người dùng'; }
+}
+loadUser();
+
+function logout() { window.location.href = '/logout?rd=https://public.vocongkhanh.id.vn/'; }
+</script>
+</body>
+</html>
