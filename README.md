@@ -35,7 +35,7 @@ Keycloak (IdP)
 | Keycloak       | Identity Provider (OIDC, SSO) |
 | Cerbos         | Authorization (policy decision engine) |
 | Application    | Business logic, integrates with Cerbos |
-| Wazuh + ELK    | Logging, monitoring, security analytics |
+| Wazuh    | Logging, monitoring, security analytics |
 
 ---
 
