@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Không có quyền truy cập</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 48px 40px;
+      max-width: 460px;
+      width: 90%;
+      text-align: center;
+    }
+    .icon {
+      width: 72px;
+      height: 72px;
+      background: #fff3f3;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .icon svg {
+      width: 36px;
+      height: 36px;
+      stroke: #e53e3e;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a202c;
+      margin-bottom: 12px;
+    }
+    p {
+      font-size: 15px;
+      color: #718096;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 28px 0;
+    }
+    .info {
+      background: #f7fafc;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #4a5568;
+      text-align: left;
+      line-height: 2;
+    }
+    .info .row {
+      display: flex;
+      gap: 8px;
+    }
+    .info .label {
+      color: #a0aec0;
+      min-width: 110px;
+      flex-shrink: 0;
+    }
+    .info .value {
+      font-weight: 600;
+      color: #2d3748;
+      word-break: break-all;
+    }
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary  { background: #3182ce; color: #fff; }
+    .btn-secondary { background: #edf2f7; color: #4a5568; }
+    .badge {
+      display: inline-block;
+      background: #fff3f3;
+      color: #c53030;
+      border: 1px solid #fed7d7;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      margin-bottom: 20px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+
+    <div class="badge">403 – Từ chối truy cập</div>
+    <h1>Bạn không có quyền vào trang này</h1>
+    <p>Tài khoản của bạn chưa được cấp quyền truy cập khu vực này theo chính sách bảo mật hệ thống.</p>
+
+    <hr class="divider">
+
+    <div class="info">
+      <div class="row">
+        <span class="label">Trang yêu cầu</span>
+        <span class="value" id="uri">—</span>
+      </div>
+      <div class="row">
+        <span class="label">Tài khoản</span>
+        <span class="value" id="user">—</span>
+      </div>
+      <div class="row">
+        <span class="label">Email</span>
+        <span class="value" id="mail">—</span>
+      </div>
+      <div class="row">
+        <span class="label">Thời gian</span>
+        <span class="value" id="time">—</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="/" class="btn btn-secondary">← Về trang chủ</a>
+      <a href="/logout" class="btn btn-primary">Đăng xuất & thử lại</a>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    const uri  = params.get('uri')  || '—';
+    const user = params.get('user') || '(không xác định)';
+    const mail = params.get('mail') || '—';
+
+    document.getElementById('uri').textContent  = uri;
+    document.getElementById('user').textContent = user;
+    document.getElementById('mail').textContent = mail;
+    document.getElementById('time').textContent = new Date().toLocaleString('vi-VN');
+  </script>
+</body>
+</html>
