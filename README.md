@@ -1,7 +1,7 @@
 # 🔐 Zero Trust Architecture for SMEs in Digital Transformation
 
 ## 📌 Introduction
-This project implements a **Zero Trust Architecture (ZTA)** model to enhance information security for small and medium-sized enterprises (SMEs) during digital transformation.
+This project implements a **Zero Trust Architecture (ZTA)** model to enhance information security for organization/business during digital transformation.
 
 Instead of relying on traditional perimeter-based security, the system enforces:
 - Continuous authentication
