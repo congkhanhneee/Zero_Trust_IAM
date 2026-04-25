@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects &amp; Tasks — Private Application</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #080c14;
+      --surface: #0d1424;
+      --card:    #111827;
+      --border:  #1a2540;
+      --border2: #243050;
+      --accent:  #6366f1;
+      --text:    #e2e8f0;
+      --sub:     #94a3b8;
+      --muted:   #475569;
+      --green:   #10b981;
+      --red:     #ef4444;
+      --yellow:  #f59e0b;
+      --blue:    #3b82f6;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Navbar ── */
+    .nav { position:sticky;top:0;z-index:100;background:rgba(8,12,20,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px; }
+    .nav-brand { font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.04em;background:linear-gradient(90deg,#a5b4fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .nav-right  { display:flex;align-items:center;gap:10px; }
+    .user-pill  { display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 14px 5px 6px;font-size:.82rem; }
+    .avatar     { width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;flex-shrink:0; }
+    .btn-sm     { background:transparent;border:1px solid var(--border);color:var(--sub);padding:5px 12px;border-radius:7px;font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .2s,color .2s; }
+    .btn-sm:hover { border-color:var(--red);color:var(--red); }
+
+    .wrap { max-width:1200px;margin:0 auto;padding:28px 24px; }
+    .crumb { display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);margin-bottom:20px; }
+    .crumb a { color:var(--sub);text-decoration:none; }
+    .crumb a:hover { color:var(--text); }
+
+    /* ── Tabs ── */
+    .tabs { display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:24px;width:fit-content; }
+    .tab  { padding:7px 18px;border-radius:7px;font-size:.85rem;font-weight:500;cursor:pointer;color:var(--sub);background:transparent;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;text-decoration:none;display:inline-block; }
+    .tab:hover { color:var(--text); }
+    .tab.active { background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.4); }
+
+    /* ── Header ── */
+    .page-hd { display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px; }
+    .page-hd h1 { font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700; }
+    .page-hd p  { color:var(--sub);font-size:.88rem;margin-top:4px; }
+
+    /* ── Stats ── */
+    .stats { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px; }
+    .stat-card { background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px; }
+    .stat-lbl  { font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px; }
+    .stat-val  { font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;line-height:1; }
+
+    /* ── Permission bar ── */
+    .perm-bar { display:flex;align-items:center;gap:10px;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:10px 16px;margin-bottom:20px;font-size:.83rem;flex-wrap:wrap; }
+    .perm-tags { display:flex;gap:6px;flex-wrap:wrap; }
+    .perm-tag  { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:600; }
+    .perm-allow{ background:rgba(16,185,129,.15);color:#34d399; }
+    .perm-deny { background:rgba(239,68,68,.12); color:#f87171; }
+
+    /* ── Project selector ── */
+    .proj-bar { display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap; }
+    .proj-tabs { display:flex;gap:6px;flex-wrap:wrap;flex:1; }
+    .proj-tab  { padding:7px 16px;border-radius:8px;font-size:.83rem;font-weight:500;cursor:pointer;color:var(--sub);background:var(--card);border:1px solid var(--border);font-family:'DM Sans',sans-serif;transition:all .15s; }
+    .proj-tab:hover  { color:var(--text);border-color:var(--border2); }
+    .proj-tab.active { background:rgba(99,102,241,.15);color:#a5b4fc;border-color:rgba(99,102,241,.3); }
+
+    /* ── Buttons ── */
+    .btn { display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s; }
+    .btn-accent  { background:var(--accent);color:#fff; }
+    .btn-accent:hover { background:#4f46e5; }
+    .btn-outline { background:transparent;color:var(--sub);border:1px solid var(--border); }
+    .btn-outline:hover { border-color:var(--border2);color:var(--text); }
+    .btn-danger  { background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2); }
+    .btn-danger:hover  { background:rgba(239,68,68,.2); }
+    .btn:disabled { opacity:.4;cursor:not-allowed; }
+
+    /* ── Kanban board ── */
+    .kanban { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+    .col { background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px; }
+    .col-hd { display:flex;align-items:center;justify-content:space-between;margin-bottom:12px; }
+    .col-title { display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600; }
+    .col-count { background:var(--card);border:1px solid var(--border);color:var(--sub);font-size:.72rem;font-weight:700;padding:1px 7px;border-radius:999px; }
+
+    /* ── Column accent lines ── */
+    .col-todo  { border-top:2px solid var(--muted); }
+    .col-doing { border-top:2px solid var(--blue); }
+    .col-done  { border-top:2px solid var(--green); }
+
+    /* ── Task card ── */
+    .task-card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 14px;margin-bottom:8px;transition:border-color .15s; }
+    .task-card:hover { border-color:var(--border2); }
+    .task-title { font-size:.875rem;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.4; }
+    .task-meta  { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px; }
+    .task-assignee { font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:4px; }
+    .task-actions { display:flex;gap:4px; }
+    .btn-icon { width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .15s;color:var(--muted); }
+    .btn-icon:hover { border-color:var(--border2);color:var(--text); }
+    .btn-icon.del:hover { border-color:rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.08); }
+    .btn-icon.hidden { visibility:hidden;pointer-events:none; }
+
+    /* ── Priority badges ── */
+    .pri { display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:999px;font-size:.68rem;font-weight:600; }
+    .pri-high   { background:rgba(239,68,68,.1);  color:#f87171; }
+    .pri-medium { background:rgba(245,158,11,.1); color:#fbbf24; }
+    .pri-low    { background:rgba(16,185,129,.1); color:#34d399; }
+
+    /* ── Status select ── */
+    select.status-sel {
+      background:var(--surface);border:1px solid var(--border);border-radius:6px;
+      color:var(--sub);font-family:'DM Sans',sans-serif;font-size:.75rem;
+      padding:3px 6px;cursor:pointer;outline:none;
+    }
+    select.status-sel:disabled { opacity:.4;cursor:not-allowed; }
+
+    /* ── Empty col ── */
+    .col-empty { text-align:center;padding:24px 12px;color:var(--muted);font-size:.8rem; }
+    .col-empty-icon { font-size:1.5rem;opacity:.3;margin-bottom:6px; }
+
+    /* ── Modal ── */
+    .modal-bg { position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s; }
+    .modal-bg.open { opacity:1;pointer-events:all; }
+    .modal { background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:440px;transform:scale(.96);transition:transform .2s; }
+    .modal-bg.open .modal { transform:scale(1); }
+    .modal h2 { font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:18px; }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block;font-size:.78rem;color:var(--sub);margin-bottom:6px; }
+    .form-group input, .form-group select, .form-group textarea { width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.875rem;padding:9px 12px;outline:none;transition:border-color .2s;resize:vertical; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent); }
+    .form-group select option { background:var(--card); }
+    .modal-footer { display:flex;justify-content:flex-end;gap:10px;margin-top:20px; }
+    .btn-cancel { background:transparent;border:1px solid var(--border);color:var(--sub);font-family:'DM Sans',sans-serif;font-size:.85rem;padding:8px 18px;border-radius:8px;cursor:pointer; }
+
+    /* ── Toast ── */
+    .toast { position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:12px 20px;font-size:.875rem;display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all .3s; }
+    .toast.show { transform:translateY(0);opacity:1; }
+    .toast.success { border-color:rgba(16,185,129,.3); }
+    .toast.error   { border-color:rgba(239,68,68,.3); }
+
+    @media (max-width:768px) { .kanban { grid-template-columns:1fr; } .stats { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">PRIVATE APPLICATION</div>
+  <div class="nav-right">
+    <div class="user-pill">
+      <div class="avatar" id="av">?</div>
+      <span id="nav-user" style="color:var(--text)">Đang tải...</span>
+    </div>
+    <button class="btn-sm" onclick="logout()">Đăng xuất</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="crumb">
+    <a href="/app/">Dashboard</a><span>/</span><span>Projects &amp; Tasks</span>
+  </div>
+
+  <div class="page-hd">
+    <div>
+      <h1>Projects &amp; Tasks</h1>
+      <p>Quản lý dự án và công việc — phân quyền theo role</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-outline" id="btn-new-proj" onclick="openModal('proj')" disabled>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Dự án mới
+      </button>
+      <button class="btn btn-accent" id="btn-new-task" onclick="openModal('task')" disabled>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Task mới
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs — tab Audit Logs ẩn mặc định, chỉ hiện nếu admin -->
+  <div class="tabs">
+    <a href="/app/" class="tab">Dashboard</a>
+    <span class="tab active">Projects &amp; Tasks</span>
+    <a href="/app/logs" class="tab" id="logs-tab" style="display:none">Audit Logs</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-lbl">Tổng dự án</div><div class="stat-val" style="color:#a5b4fc" id="s-proj">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Tasks todo</div><div class="stat-val" style="color:var(--muted)" id="s-todo">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Đang làm</div><div class="stat-val" style="color:var(--blue)" id="s-doing">—</div></div>
+    <div class="stat-card"><div class="stat-lbl">Hoàn thành</div><div class="stat-val" style="color:var(--green)" id="s-done">—</div></div>
+  </div>
+
+  <!-- Permission bar -->
+  <div class="perm-bar">
+    <svg width="14" height="14" fill="none" stroke="#a5b4fc" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span style="color:var(--sub)">Quyền của bạn:</span>
+    <div class="perm-tags" id="perm-tags"></div>
+  </div>
+
+  <!-- Project tabs -->
+  <div class="proj-bar">
+    <div class="proj-tabs" id="proj-tabs"></div>
+  </div>
+
+  <!-- Kanban -->
+  <div class="kanban">
+    <div class="col col-todo">
+      <div class="col-hd">
+        <div class="col-title" style="color:var(--sub)">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+          Chờ thực hiện
+        </div>
+        <span class="col-count" id="cnt-todo">0</span>
+      </div>
+      <div id="col-todo"></div>
+    </div>
+    <div class="col col-doing">
+      <div class="col-hd">
+        <div class="col-title" style="color:#60a5fa">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Đang thực hiện
+        </div>
+        <span class="col-count" id="cnt-doing">0</span>
+      </div>
+      <div id="col-doing"></div>
+    </div>
+    <div class="col col-done">
+      <div class="col-hd">
+        <div class="col-title" style="color:#34d399">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          Hoàn thành
+        </div>
+        <span class="col-count" id="cnt-done">0</span>
+      </div>
+      <div id="col-done"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal-bg" onclick="handleBgClick(event)">
+  <div class="modal" id="modal-inner"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+let projects = [], tasks = [], perms = {}, selProjId = null;
+
+// ── Init ──────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const [uRes, pRes, projRes, taskRes] = await Promise.all([
+      fetch('/app/whoami'),
+      fetch('/app/api/permissions'),
+      fetch('/app/api/projects'),
+      fetch('/app/api/tasks'),
+    ]);
+    const u = await uRes.json();
+    perms     = await pRes.json();
+    projects  = await projRes.json();
+    tasks     = await taskRes.json();
+
+    const name = u.user || '—';
+    document.getElementById('nav-user').textContent = name;
+    document.getElementById('av').textContent       = name.substring(0,2).toUpperCase();
+
+    applyPermissions();
+    updateStats();
+    renderProjTabs();
+    if (projects.length) { selProjId = projects[0].id; renderProjTabs(); renderBoard(); }
+  } catch(e) { showToast('Không thể tải dữ liệu', 'error'); }
+}
+
+function applyPermissions() {
+  const tags = [
+    {label:'Xem',      ok:perms.read},
+    {label:'Tạo',      ok:perms.create},
+    {label:'Cập nhật', ok:perms.update},
+    {label:'Xóa',      ok:perms.delete},
+    {label:'Admin',    ok:perms.admin},
+  ];
+  document.getElementById('perm-tags').innerHTML = tags.map(t =>
+    `<span class="perm-tag ${t.ok?'perm-allow':'perm-deny'}">${t.ok?'✓':'✗'} ${t.label}</span>`
+  ).join('');
+
+  if (perms.create) {
+    document.getElementById('btn-new-proj').disabled = false;
+    document.getElementById('btn-new-task').disabled = false;
+  }
+
+  // Chỉ hiện tab Audit Logs nếu là admin
+  if (perms.admin) {
+    document.getElementById('logs-tab').style.display = 'inline-block';
+  }
+}
+
+function updateStats() {
+  document.getElementById('s-proj').textContent  = projects.length;
+  document.getElementById('s-todo').textContent  = tasks.filter(t=>t.status==='todo').length;
+  document.getElementById('s-doing').textContent = tasks.filter(t=>t.status==='doing').length;
+  document.getElementById('s-done').textContent  = tasks.filter(t=>t.status==='done').length;
+}
+
+// ── Project tabs ──────────────────────────────────────────────────────────
+function renderProjTabs() {
+  document.getElementById('proj-tabs').innerHTML = projects.map(p => `
+    <button class="proj-tab ${selProjId===p.id?'active':''}" onclick="selectProj(${p.id})">
+      ${p.name}
+      ${perms.delete ? `<span onclick="event.stopPropagation();deleteProj(${p.id})" style="margin-left:4px;opacity:.4;font-size:.8rem" title="Xóa dự án">×</span>` : ''}
+    </button>`).join('');
+}
+
+function selectProj(id) {
+  selProjId = id;
+  renderProjTabs();
+  renderBoard();
+}
+
+// ── Kanban board ──────────────────────────────────────────────────────────
+function renderBoard() {
+  const filtered = selProjId ? tasks.filter(t => t.projectId === selProjId) : tasks;
+
+  const cols = { todo: [], doing: [], done: [] };
+  filtered.forEach(t => { if (cols[t.status]) cols[t.status].push(t); });
+
+  document.getElementById('cnt-todo').textContent  = cols.todo.length;
+  document.getElementById('cnt-doing').textContent = cols.doing.length;
+  document.getElementById('cnt-done').textContent  = cols.done.length;
+
+  ['todo','doing','done'].forEach(s => {
+    const el = document.getElementById('col-'+s);
+    if (!cols[s].length) {
+      el.innerHTML = `<div class="col-empty"><div class="col-empty-icon">📋</div>Chưa có task</div>`;
+      return;
+    }
+    el.innerHTML = cols[s].map(t => `
+      <div class="task-card">
+        <div class="task-title">${t.title}</div>
+        <div class="task-meta">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="pri pri-${t.priority}">${t.priority}</span>
+            <span class="task-assignee">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              ${t.assignee}
+            </span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <select class="status-sel" onchange="changeStatus(${t.id}, this.value)" ${perms.update?'':'disabled'}>
+              <option value="todo"  ${t.status==='todo' ?'selected':''}>Todo</option>
+              <option value="doing" ${t.status==='doing'?'selected':''}>Doing</option>
+              <option value="done"  ${t.status==='done' ?'selected':''}>Done</option>
+            </select>
+            <button class="btn-icon del ${perms.delete?'':'hidden'}" title="Xóa task" onclick="deleteTask(${t.id})">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>`).join('');
+  });
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────
+async function changeStatus(id, status) {
+  try {
+    const r = await fetch(`/app/api/tasks/${id}`, {
+      method:'PATCH', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ status })
+    });
+    if (!r.ok) { const d=await r.json(); showToast(d.error||'Lỗi cập nhật','error'); return; }
+    const t = tasks.find(x => x.id === id);
+    if (t) t.status = status;
+    updateStats(); renderBoard();
+    showToast('Đã cập nhật trạng thái task', 'success');
+  } catch { showToast('Lỗi kết nối','error'); }
+}
+
+async function deleteTask(id) {
+  if (!confirm('Xóa task này?')) return;
+  try {
+    const r = await fetch(`/app/api/tasks/${id}`, { method:'DELETE' });
+    if (!r.ok) { const d=await r.json(); showToast(d.error||'Lỗi xóa task','error'); return; }
+    tasks = tasks.filter(t => t.id !== id);
+    updateStats(); renderBoard();
+    showToast('Đã xóa task', 'success');
+  } catch { showToast('Lỗi kết nối','error'); }
+}
+
+async function deleteProj(id) {
+  const p = projects.find(x => x.id === id);
+  if (!confirm(`Xóa dự án "${p?.name}"? Tất cả task trong dự án cũng sẽ bị xóa.`)) return;
+  try {
+    const r = await fetch(`/app/api/projects/${id}`, { method:'DELETE' });
+    if (!r.ok) { const d=await r.json(); showToast(d.error||'Lỗi xóa dự án','error'); return; }
+    projects = projects.filter(x => x.id !== id);
+    tasks    = tasks.filter(t => t.projectId !== id);
+    selProjId = projects.length ? projects[0].id : null;
+    updateStats(); renderProjTabs(); renderBoard();
+    showToast('Đã xóa dự án', 'success');
+  } catch { showToast('Lỗi kết nối','error'); }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────
+function openModal(type) {
+  const inner = document.getElementById('modal-inner');
+  if (type === 'proj') {
+    inner.innerHTML = `
+      <h2>Tạo dự án mới</h2>
+      <div class="form-group"><label>Tên dự án *</label><input type="text" id="f-pname" placeholder="VD: Zero Trust Phase 2"></div>
+      <div class="form-group"><label>Mô tả</label><textarea id="f-pdesc" rows="3" placeholder="Mô tả ngắn về dự án..."></textarea></div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Hủy</button>
+        <button class="btn btn-accent" onclick="submitProj()">Tạo dự án</button>
+      </div>`;
+  } else {
+    inner.innerHTML = `
+      <h2>Tạo task mới</h2>
+      <div class="form-group"><label>Tiêu đề task *</label><input type="text" id="f-ttitle" placeholder="VD: Cấu hình firewall rule"></div>
+      <div class="form-group"><label>Dự án *</label>
+        <select id="f-tproj">
+          ${projects.map(p=>`<option value="${p.id}" ${p.id===selProjId?'selected':''}>${p.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Người thực hiện</label><input type="text" id="f-tassign" placeholder="VD: techteam"></div>
+      <div class="form-group"><label>Độ ưu tiên</label>
+        <select id="f-tpri"><option value="high">Cao</option><option value="medium" selected>Trung bình</option><option value="low">Thấp</option></select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Hủy</button>
+        <button class="btn btn-accent" onclick="submitTask()">Tạo task</button>
+      </div>`;
+  }
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function handleBgClick(e) { if (e.target === e.currentTarget) closeModal(); }
+
+async function submitProj() {
+  const name = document.getElementById('f-pname').value.trim();
+  const desc = document.getElementById('f-pdesc').value.trim();
+  if (!name) { showToast('Vui lòng nhập tên dự án','error'); return; }
+  try {
+    const r = await fetch('/app/api/projects', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name,desc}) });
+    const d = await r.json();
+    if (!r.ok) { showToast(d.error||'Lỗi tạo dự án','error'); return; }
+    projects.push(d);
+    selProjId = d.id;
+    updateStats(); renderProjTabs(); renderBoard();
+    closeModal(); showToast('Đã tạo dự án mới','success');
+  } catch { showToast('Lỗi kết nối','error'); }
+}
+
+async function submitTask() {
+  const title   = document.getElementById('f-ttitle').value.trim();
+  const projId  = document.getElementById('f-tproj').value;
+  const assignee= document.getElementById('f-tassign').value.trim();
+  const priority= document.getElementById('f-tpri').value;
+  if (!title) { showToast('Vui lòng nhập tiêu đề task','error'); return; }
+  try {
+    const r = await fetch('/app/api/tasks', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({title, projectId:parseInt(projId), assignee, priority}) });
+    const d = await r.json();
+    if (!r.ok) { showToast(d.error||'Lỗi tạo task','error'); return; }
+    tasks.push(d);
+    selProjId = d.projectId;
+    updateStats(); renderProjTabs(); renderBoard();
+    closeModal(); showToast('Đã tạo task mới','success');
+  } catch { showToast('Lỗi kết nối','error'); }
+}
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  const icon = type==='success'?'✓':'✕';
+  t.innerHTML = `<span style="color:${type==='success'?'#34d399':'#f87171'};font-weight:700">${icon}</span> ${msg}`;
+  t.className = `toast ${type} show`;
+  setTimeout(()=>t.className='toast', 3000);
+}
+
+function logout() { window.location.href = '/logout?rd=https://public.vocongkhanh.id.vn/'; }
+
+init();
+</script>
+</body>
+</html>
