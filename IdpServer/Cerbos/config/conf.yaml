@@ -1,0 +1,17 @@
+server:
+  httpListenAddr: ":3592"
+  grpcListenAddr: ":3593"
+  # TLS tắt tạm thời để test
+
+storage:
+  driver: "disk"
+  disk:
+    directory: "/policies"
+    watchForChanges: true
+
+audit:
+  enabled: true
+  backend: "local"
+  local:
+    directory: "/audit"
+    fileName: "cerbos_audit.log"
