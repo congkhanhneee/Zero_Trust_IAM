@@ -1,0 +1,29 @@
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  resource: "document"
+  importDerivedRoles:
+    - resource_derived_roles
+  rules:
+    - name: deny_anonymous
+      actions: ["*"]
+      roles: ["anonymous"]
+      effect: EFFECT_DENY
+
+    - name: deny_blacklisted_ip
+      actions: ["*"]
+      roles: ["user", "private-access", "public-access", "role:default-roles-zero-trust-realm"]
+      effect: EFFECT_DENY
+      condition:
+        match:
+          expr: "P.attr.ip in ['203.0.113.1', '8.8.8.8', '172.16.0.50']"
+
+    - name: admin_full_documents
+      actions: ["*"]
+      derivedRoles: ["admin_role"]
+      effect: EFFECT_ALLOW
+
+    - name: users_document_ops
+      actions: ["read", "upload", "download", "delete"]
+      derivedRoles: ["resource_user_in_hours"]
+      effect: EFFECT_ALLOW
